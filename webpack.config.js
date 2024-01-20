@@ -37,6 +37,10 @@ const config = {
 			chunkFilename: 'css/[name].[contenthash:8].css',
 		}),
   ],
+	resolve: {
+		extensions: ['.js'],
+	},
+	devtool: isProduction ? 'inline-source-map' : false,
   module: {
     rules: [
       {
