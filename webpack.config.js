@@ -40,7 +40,7 @@ const config = {
 	resolve: {
 		extensions: ['.js'],
 	},
-	devtool: isProduction ? 'inline-source-map' : false,
+	devtool: isProduction ? false : 'inline-false-map' ,
   module: {
     rules: [
       {
