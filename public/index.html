@@ -6,9 +6,39 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-    <form id="add-rss">
-      <input type="text">
-      <input type="submit" value="Добавить RSS поток">
-    </form>
+		<header class="header bg-dark text-white">
+			<div class="container-fluid p-5">
+				<div class="row">
+					<div class="col-md-10 col-lg-8 mx-auto">
+						<h1 class="display-3 mb-0">RSS агрегатор</h1>
+						<h2 class="sub-title lead mb-4">Начните читать RSS сегодня! Это легко, это красиво.</h2>
+						<form class="rss-form text-body" method="get">
+							<div class="row">
+								<div class="col">
+									<div class="form-floating">
+										<input 
+											required 
+											autofocus 
+											autocomplete="off" 
+											placeholder="RSS ссылка" 
+											type="text" 
+											name="rss-url" 
+											id="rss-url-input"
+											class="w-100 form-control"
+										>
+										<label for="rss-url">RSS ссылка</label>
+									</div>
+								</div>
+								<div class="col-auto">
+									<input type="submit" value="Добавить" class="btn btn-lg btn-primary h-100 px-5">
+								</div>
+							</div>
+						</form>
+						<p class="mt-2 mb-0 text-muted">Пример: https://lorem-rss.hexlet.app/feed</p>
+						<p class="feedback m-0 position-absolute small text-danger"></p>
+					</div>
+				</div>
+			</div>
+		</header>
   </body>
 </html>

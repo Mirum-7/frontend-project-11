@@ -21,6 +21,7 @@
         "jest/no-identical-title": "error",
         "jest/prefer-to-have-length": "warn",
         "jest/valid-expect": "error",
-        "indent": ["error", { "allowIndentationTabs": true }]
+        "indent": ["error", "tab"],
+        "no-tabs":"off"
     }
 }
