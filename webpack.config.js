@@ -1,4 +1,3 @@
-// Generated using webpack-cli https://github.com/webpack/webpack-cli
 
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -13,7 +12,9 @@ const paths = {
 };
 
 const config = {
-	entry: paths.entry,
+	entry: {
+		app: paths.entry,
+	},
 	output: {
 		path: paths.output,
 		clean: true,
