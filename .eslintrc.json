@@ -22,6 +22,7 @@
         "jest/prefer-to-have-length": "warn",
         "jest/valid-expect": "error",
         "indent": ["error", "tab"],
-        "no-tabs":"off"
+        "no-tabs":"off",
+				"object-curly-spacing": ["error", "always"]
     }
 }

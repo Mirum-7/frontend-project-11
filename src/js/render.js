@@ -1,8 +1,9 @@
 export const render = (state, elements) => (path, value, prevValue) => {
+	console.log(value);
 	if (path === 'rssForm.state') {
 		switch (value) {
 		case 'invalid':
-			elements.feedback.textContent = 'Ссылка должна быть валидным URL';
+			elements.feedback.textContent = state.rssForm.error;
 			elements.urlInput.classList.add('is-invalid');
 
 			elements.submitBtn.disabled = true;
@@ -24,7 +25,7 @@ export const render = (state, elements) => (path, value, prevValue) => {
 		case 'actually-exist':
 			elements.urlInput.classList.add('is-invalid');
 			elements.submitBtn.disabled = true;
-			elements.feedback.textContent = 'Ссылка уже добавлена';
+			elements.feedback.textContent = state.rssForm.error;
 			break;
 		default:
 			throw new Error(`StateError: unknown state: ${value}`);

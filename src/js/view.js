@@ -1,7 +1,8 @@
-import {string} from 'yup';
-const scheme = string().url().required();
+import { string } from 'yup';
 
-export const view = (state, elements) => {
+export const view = (state, elements, i18n) => {
+	const scheme = string().url().required();
+
 	elements.form.addEventListener('submit', (e) => {
 		e.preventDefault();
 
@@ -33,6 +34,10 @@ export const view = (state, elements) => {
 
 		scheme.isValid(url).then((isValid) => {
 			state.rssForm.state = isValid ? 'valid' : 'invalid';
+		});
+
+		scheme.validate(url).catch((err) => {
+			state.rssForm.error = i18n.t(err.errors[0].key);
 		});
 	});
 };
