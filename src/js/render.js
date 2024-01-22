@@ -27,7 +27,7 @@ export const render = (state, elements) => (path, value, prevValue) => {
 			elements.feedback.textContent = 'Ссылка уже добавлена';
 			break;
 		default:
-			throw new Error(`unknown state: ${value}`);
+			throw new Error(`StateError: unknown state: ${value}`);
 		}
 	}
 };

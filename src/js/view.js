@@ -1,8 +1,7 @@
 import {string} from 'yup';
+const scheme = string().url().required();
 
 export const view = (state, elements) => {
-	const scheme = string().url().required();
-
 	elements.form.addEventListener('submit', (e) => {
 		e.preventDefault();
 
