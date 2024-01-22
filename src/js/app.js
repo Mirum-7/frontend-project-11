@@ -11,6 +11,9 @@ export default () => {
 				url: null,
 			},
 		},
+		rssUrls: [
+
+		],
 	};
 
 	const elements = {

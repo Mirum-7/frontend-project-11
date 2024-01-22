@@ -9,21 +9,31 @@ export const view = (state, elements) => {
 		if (state.rssForm.state !== 'valid') return;
 
 		const formData = new FormData(e.target);
+		const url = formData.get('rss-url');
+
 		state.rssForm.data = {
-			url: formData.get('rss-url'),
+			url,
 		};
-		state.rssForm.state = 'sending';
-		// e.target.reset();
+		state.rssUrls.push(url);
+		// state.rssForm.state = 'sending';
+		e.target.reset();
 	});
 
 	elements.urlInput.addEventListener('input', (e) => {
 		const url = e.target.value;
-		if (url) {
-			scheme.isValid(url).then((isValid) => {
-				state.rssForm.state = isValid ? 'valid' : 'invalid';
-			});
+
+		if (!url) {
+			state.rssForm.state = 'filling';
 			return;
 		}
-		state.rssForm.state = 'filling';
+
+		if (state.rssUrls.includes(url)) {
+			state.rssForm.state = 'actually-exist';
+			return;
+		}
+
+		scheme.isValid(url).then((isValid) => {
+			state.rssForm.state = isValid ? 'valid' : 'invalid';
+		});
 	});
 };

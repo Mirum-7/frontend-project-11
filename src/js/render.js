@@ -21,6 +21,11 @@ export const render = (state, elements) => (path, value, prevValue) => {
 			elements.submitBtn.disabled = true;
 			elements.urlInput.disabled = true;
 			break;
+		case 'actually-exist':
+			elements.urlInput.classList.add('is-invalid');
+			elements.submitBtn.disabled = true;
+			elements.feedback.textContent = 'Ссылка уже добавлена';
+			break;
 		default:
 			throw new Error(`unknown state: ${value}`);
 		}
