@@ -1,34 +1,97 @@
-export const render = (state, elements) => (path, value, prevValue) => {
-	console.log(value);
-	if (path === 'rssForm.state') {
-		switch (value) {
-		case 'invalid':
-			elements.feedback.textContent = state.rssForm.error;
-			elements.urlInput.classList.add('is-invalid');
 
-			elements.submitBtn.disabled = true;
-			break;
-		case 'valid':
-			elements.feedback.textContent = '';
-			elements.urlInput.classList.remove('is-invalid');
-			elements.submitBtn.disabled = false;
-			break;
-		case 'filling':
-			elements.feedback.textContent = '';
-			elements.urlInput.classList.remove('is-invalid');
-			elements.submitBtn.disabled = true;
-			break;
-		case 'sending':
-			elements.submitBtn.disabled = true;
-			elements.urlInput.disabled = true;
-			break;
-		case 'actually-exist':
-			elements.urlInput.classList.add('is-invalid');
-			elements.submitBtn.disabled = true;
-			elements.feedback.textContent = state.rssForm.error;
-			break;
-		default:
-			throw new Error(`StateError: unknown state: ${value}`);
-		}
-	}
+const createSwitchers = (target) => {
+	const enable = () => {
+		target.disabled = false;
+	};
+
+	const disable = () => {
+		target.disabled = true;
+	};
+
+	return [enable, disable];
 };
+
+const createClassSwitchers = (target) => (className) => {
+	const remove = () => {
+		target.classList.remove(className);
+	};
+
+	const add = () => {
+		target.classList.add(className);
+	};
+
+	return [remove, add];
+};
+
+const createFeedbackSetters = (target) => (...classNames) => {
+	const setters = classNames.map((className) => {
+		const setMessageWithClass = (message) => {
+			target.classList.remove(...classNames);
+			target.classList.add(className);
+
+			target.textContent = message;
+		};
+
+		return setMessageWithClass;
+	});
+
+	const clear = () => {
+		target.classList.remove(...classNames);
+
+		target.textContent = '';
+	};
+
+	return [...setters, clear];
+};
+
+const render = (state, elements) => {
+	const [enableBtn, disableBtn] = createSwitchers(elements.submitBtn);
+	const [enableInput, disableInput] = createSwitchers(elements.urlInput);
+
+	const [setValidInput, setInvalidInput] = createClassSwitchers(elements.urlInput)('is-invalid');
+
+	const [setDanger, setSuccess, clearMessage] = createFeedbackSetters(elements.feedback)('text-danger', 'text-success');
+
+	const handler = (path, value, prevValue) => {
+		if (path === 'rssForm.state') {
+			switch (value) {
+			case 'invalid':
+				setDanger(state.rssForm.message);
+				setInvalidInput();
+				disableBtn();
+				break;
+			case 'valid':
+				clearMessage();
+				setValidInput();
+				enableBtn();
+				break;
+			case 'filling':
+				clearMessage();
+				setValidInput();
+				disableBtn();
+				break;
+			case 'sending':
+				disableBtn();
+				disableInput();
+				break;
+			case 'actually-exist':
+				setInvalidInput();
+				setDanger(state.rssForm.message);
+				disableBtn();
+				break;
+			case 'successfully':
+				setSuccess(state.rssForm.message);
+				enableInput();
+				disableBtn();
+				break;
+			default:
+				throw new Error(`StateError: unknown state: ${value}`);
+			}
+		}
+	};
+
+	return handler;
+};
+
+
+export { render };
