@@ -23,6 +23,7 @@
         "jest/valid-expect": "error",
         "indent": ["error", "tab"],
         "no-tabs":"off",
-				"object-curly-spacing": ["error", "always"]
+				"object-curly-spacing": ["error", "always"],
+				"max-len": "off"
     }
 }

@@ -1,14 +1,17 @@
 import onChange from 'on-change';
-import { render } from './render';
-import { view } from './view';
+import render from './render';
 import { setLocale } from 'yup';
 import i18next from 'i18next';
-import { resources } from './locals/resources';
+import resources from './locals/resources';
+import view from './view';
 
 export default () => {
 	setLocale({
+		mixed: {
+			notOneOf: { key: 'form.messages.errors.urlActuallyExist' },
+		},
 		string: {
-			url: () => ({ key: 'form.errors.invalidUrl' }),
+			url: { key: 'form.messages.errors.invalidUrl' },
 		},
 	});
 
@@ -22,9 +25,7 @@ export default () => {
 	const state = {
 		rssForm: {
 			state: 'filling',
-			errors: [
-
-			],
+			error: '',
 			data: {
 				url: null,
 			},
@@ -41,7 +42,11 @@ export default () => {
 		submitBtn: document.getElementById('form-submit'),
 	};
 
-	const watchedState = onChange(state, render(state, elements));
+	elements.submitBtn.value = i18n.t('form.submitBtn');
+	elements.urlInput.placeholder = i18n.t('form.input');
+	elements.urlInput.nextElementSibling.textContent = i18n.t('form.input');
 
-	view(watchedState, elements, i18n);
+	const watchedState = onChange(state, render(state, elements, i18n));
+
+	view(watchedState, elements);
 };

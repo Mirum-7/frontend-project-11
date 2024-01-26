@@ -21,7 +21,6 @@ const config = {
 		filename: '[name].[contenthash:8].js',
 	},
 	devServer: {
-		open: true,
 		host: 'localhost',
 		port: 3000,
 		hot: true,

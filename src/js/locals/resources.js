@@ -1,5 +1,5 @@
-import { ru } from './ru';
+import ru from './langs/ru';
 
-export const resources = {
+export default {
 	ru,
 };

@@ -1,7 +1,7 @@
 import { string } from 'yup';
 
-export const view = (state, elements, i18n) => {
-	const scheme = string().url().required();
+export default (state, elements) => {
+	let scheme = string().url().required();
 
 	elements.form.addEventListener('submit', (e) => {
 		e.preventDefault();
@@ -14,9 +14,13 @@ export const view = (state, elements, i18n) => {
 		state.rssForm.data = {
 			url,
 		};
+
+		state.rssForm.state = 'sending';
 		state.rssUrls.push(url);
-		// state.rssForm.state = 'sending';
-		e.target.reset();
+		// Добавлял объявление валидатора в начало, но state.rssUrls передается не по ссылке, а копируется его значение
+		// Поэтому добавил его сюда, чтобы он копировал новое значение при добавление ссылок
+		scheme = string().url().required().notOneOf(state.rssUrls);
+		state.rssForm.state = 'successfully';
 	});
 
 	elements.urlInput.addEventListener('input', (e) => {
@@ -26,18 +30,13 @@ export const view = (state, elements, i18n) => {
 			state.rssForm.state = 'filling';
 			return;
 		}
-
-		if (state.rssUrls.includes(url)) {
-			state.rssForm.state = 'actually-exist';
-			return;
-		}
-
-		scheme.isValid(url).then((isValid) => {
-			state.rssForm.state = isValid ? 'valid' : 'invalid';
-		});
-
-		scheme.validate(url).catch((err) => {
-			state.rssForm.error = i18n.t(err.errors[0].key);
-		});
+		scheme.validate(url)
+			.then(() => {
+				state.rssForm.state = 'valid';
+			})
+			.catch((err) => {
+				state.rssForm.error = err.errors[0];
+				state.rssForm.state = 'invalid';
+			});
 	});
 };

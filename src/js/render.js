@@ -44,7 +44,7 @@ const createFeedbackSetters = (target) => (...classNames) => {
 	return [...setters, clear];
 };
 
-const render = (state, elements) => {
+const render = (state, elements, i18n) => {
 	const [enableBtn, disableBtn] = createSwitchers(elements.submitBtn);
 	const [enableInput, disableInput] = createSwitchers(elements.urlInput);
 
@@ -56,7 +56,7 @@ const render = (state, elements) => {
 		if (path === 'rssForm.state') {
 			switch (value) {
 			case 'invalid':
-				setDanger(state.rssForm.message);
+				setDanger(i18n.t(state.rssForm.error.key));
 				setInvalidInput();
 				disableBtn();
 				break;
@@ -74,15 +74,11 @@ const render = (state, elements) => {
 				disableBtn();
 				disableInput();
 				break;
-			case 'actually-exist':
-				setInvalidInput();
-				setDanger(state.rssForm.message);
-				disableBtn();
-				break;
 			case 'successfully':
-				setSuccess(state.rssForm.message);
+				setSuccess(i18n.t('form.messages.success'));
 				enableInput();
 				disableBtn();
+				elements.form.reset();
 				break;
 			default:
 				throw new Error(`StateError: unknown state: ${value}`);
@@ -94,4 +90,4 @@ const render = (state, elements) => {
 };
 
 
-export { render };
+export default render;
