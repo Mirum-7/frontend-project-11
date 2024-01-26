@@ -3,7 +3,7 @@ import render from './render';
 import { setLocale } from 'yup';
 import i18next from 'i18next';
 import resources from './locals/resources';
-import view from './view';
+import controller from './controller';
 
 export default () => {
 	setLocale({
@@ -48,5 +48,5 @@ export default () => {
 
 	const watchedState = onChange(state, render(state, elements, i18n));
 
-	view(watchedState, elements);
+	controller(watchedState, elements);
 };
