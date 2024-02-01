@@ -66,7 +66,8 @@ export default () => {
 		watchedState.rssForm.state = 'sending';
 		scheme.validate(url)
 			.then(() => {
-				getRSS(url).then(parse).then(console.log)
+				getRSS(url).then(parse)
+					.then(console.log)
 					.then(() => {
 						watchedState.rssUrls.push(url);
 						// Добавлял объявление валидатора в начало, но state.rssUrls передается не по ссылке, а копируется его значение
