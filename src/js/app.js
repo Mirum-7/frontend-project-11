@@ -17,10 +17,10 @@ const getRSS = (url) => {
 export default () => {
 	setLocale({
 		mixed: {
-			notOneOf: { key: 'form.messages.errors.urlActuallyExist' },
+			notOneOf: 'form.messages.errors.urlActuallyExist',
 		},
 		string: {
-			url: { key: 'form.messages.errors.invalidUrl' },
+			url: 'form.messages.errors.invalidUrl',
 		},
 	});
 
@@ -35,7 +35,7 @@ export default () => {
 
 	const state = {
 		rssForm: {
-			state: 'filling',
+			state: null,
 			error: '',
 		},
 		rssUrls: [
@@ -60,36 +60,24 @@ export default () => {
 	elements.form.addEventListener('submit', (e) => {
 		e.preventDefault();
 
-		if (watchedState.rssForm.state !== 'valid') return;
-
 		const formData = new FormData(e.target);
 		const url = formData.get('rss-url');
 
 		watchedState.rssForm.state = 'sending';
-		getRSS(url).then(parse).then(console.log)
-			.then(() => {
-				watchedState.rssUrls.push(url);
-				// Добавлял объявление валидатора в начало, но state.rssUrls передается не по ссылке, а копируется его значение
-				// Поэтому добавил его сюда, чтобы он копировал новое значение при добавление ссылок
-				scheme = string().url().required().notOneOf(watchedState.rssUrls);
-				watchedState.rssForm.state = 'successfully';
-			})
-			.catch(() => {
-				watchedState.rssForm.error = { key: 'form.messages.errors.notFoundRssContent' };
-				watchedState.rssForm.state = 'failed';
-			});
-	});
-
-	elements.urlInput.addEventListener('input', (e) => {
-		const url = e.target.value;
-
-		if (!url) {
-			watchedState.rssForm.state = 'filling';
-			return;
-		}
 		scheme.validate(url)
 			.then(() => {
-				watchedState.rssForm.state = 'valid';
+				getRSS(url).then(parse).then(console.log)
+					.then(() => {
+						watchedState.rssUrls.push(url);
+						// Добавлял объявление валидатора в начало, но state.rssUrls передается не по ссылке, а копируется его значение
+						// Поэтому добавил его сюда, чтобы он копировал новое значение при добавление ссылок
+						scheme = string().url().required().notOneOf(watchedState.rssUrls);
+						watchedState.rssForm.state = 'successfully';
+					})
+					.catch(() => {
+						watchedState.rssForm.error = 'form.messages.errors.notFoundRssContent';
+						watchedState.rssForm.state = 'invalid';
+					});
 			})
 			.catch((err) => {
 				watchedState.rssForm.error = err.errors[0];

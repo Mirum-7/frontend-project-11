@@ -56,35 +56,24 @@ const render = (state, elements, i18n) => {
 		if (path === 'rssForm.state') {
 			switch (value) {
 			case 'invalid':
-				setDanger(i18n.t(state.rssForm.error.key));
+				setDanger(i18n.t(state.rssForm.error));
 				setInvalidInput();
-				disableBtn();
-				break;
-			case 'valid':
-				clearMessage();
-				setValidInput();
 				enableBtn();
-				break;
-			case 'filling':
-				clearMessage();
-				setValidInput();
-				disableBtn();
+				enableInput();
+				elements.urlInput.focus();
 				break;
 			case 'sending':
+				clearMessage();
 				disableBtn();
 				disableInput();
 				break;
 			case 'successfully':
 				setSuccess(i18n.t('form.messages.success'));
+				setValidInput();
+				enableBtn();
 				enableInput();
-				disableBtn();
 				elements.form.reset();
-				break;
-			case 'failed':
-				setDanger(i18n.t(state.rssForm.error.key));
-				enableInput();
-				disableBtn();
-				elements.form.reset();
+				elements.urlInput.focus();
 				break;
 			default:
 				throw new Error(`StateError: unknown state: ${value}`);
