@@ -5,6 +5,7 @@ export default {
 				errors: {
 					invalidUrl: 'Ссылка должна быть валидным URL',
 					urlActuallyExist: 'Ссылка уже добавлена',
+					notFoundRssContent: 'RSS контент не найден',
 				},
 				success: 'RSS успешно загружен',
 			},

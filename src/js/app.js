@@ -1,9 +1,18 @@
 import onChange from 'on-change';
 import render from './render';
-import { setLocale } from 'yup';
+import { setLocale, string } from 'yup';
 import i18next from 'i18next';
 import resources from './locals/resources';
-import controller from './controller';
+import parse from './parser';
+import axios from 'axios';
+
+const getRSS = (url) => {
+	return axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
+		.then((response) => response.data)
+		.then((data) => {
+			return data.contents;
+		});
+};
 
 export default () => {
 	setLocale({
@@ -14,6 +23,8 @@ export default () => {
 			url: { key: 'form.messages.errors.invalidUrl' },
 		},
 	});
+
+	let scheme = string().url().required();
 
 	const i18n = i18next.createInstance();
 	i18n.init({
@@ -26,9 +37,6 @@ export default () => {
 		rssForm: {
 			state: 'filling',
 			error: '',
-			data: {
-				url: null,
-			},
 		},
 		rssUrls: [
 
@@ -48,5 +56,44 @@ export default () => {
 
 	const watchedState = onChange(state, render(state, elements, i18n));
 
-	controller(watchedState, elements);
+
+	elements.form.addEventListener('submit', (e) => {
+		e.preventDefault();
+
+		if (watchedState.rssForm.state !== 'valid') return;
+
+		const formData = new FormData(e.target);
+		const url = formData.get('rss-url');
+
+		watchedState.rssForm.state = 'sending';
+		getRSS(url).then(parse).then(console.log)
+			.then(() => {
+				watchedState.rssUrls.push(url);
+				// Добавлял объявление валидатора в начало, но state.rssUrls передается не по ссылке, а копируется его значение
+				// Поэтому добавил его сюда, чтобы он копировал новое значение при добавление ссылок
+				scheme = string().url().required().notOneOf(watchedState.rssUrls);
+				watchedState.rssForm.state = 'successfully';
+			})
+			.catch(() => {
+				watchedState.rssForm.error = { key: 'form.messages.errors.notFoundRssContent' };
+				watchedState.rssForm.state = 'failed';
+			});
+	});
+
+	elements.urlInput.addEventListener('input', (e) => {
+		const url = e.target.value;
+
+		if (!url) {
+			watchedState.rssForm.state = 'filling';
+			return;
+		}
+		scheme.validate(url)
+			.then(() => {
+				watchedState.rssForm.state = 'valid';
+			})
+			.catch((err) => {
+				watchedState.rssForm.error = err.errors[0];
+				watchedState.rssForm.state = 'invalid';
+			});
+	});
 };

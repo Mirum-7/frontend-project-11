@@ -80,6 +80,12 @@ const render = (state, elements, i18n) => {
 				disableBtn();
 				elements.form.reset();
 				break;
+			case 'failed':
+				setDanger(i18n.t(state.rssForm.error.key));
+				enableInput();
+				disableBtn();
+				elements.form.reset();
+				break;
 			default:
 				throw new Error(`StateError: unknown state: ${value}`);
 			}
