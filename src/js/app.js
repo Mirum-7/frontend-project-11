@@ -1,13 +1,15 @@
-import onChange from 'on-change';
-import render from './render';
-import { setLocale, string } from 'yup';
+import axios from 'axios';
 import i18next from 'i18next';
+import onChange from 'on-change';
+import { setLocale, string } from 'yup';
 import resources from './locals/resources';
 import parse from './parser';
-import axios from 'axios';
+import render from './render';
+
 
 const getRSS = (url) => {
-	return axios.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
+	return axios
+		.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
 		.then((response) => response.data)
 		.then((data) => {
 			return data.contents;
@@ -38,9 +40,7 @@ export default () => {
 			state: null,
 			error: '',
 		},
-		rssUrls: [
-
-		],
+		rssUrls: [],
 	};
 
 	const elements = {
@@ -56,7 +56,6 @@ export default () => {
 
 	const watchedState = onChange(state, render(state, elements, i18n));
 
-
 	elements.form.addEventListener('submit', (e) => {
 		e.preventDefault();
 
@@ -64,9 +63,11 @@ export default () => {
 		const url = formData.get('rss-url');
 
 		watchedState.rssForm.state = 'sending';
-		scheme.validate(url)
+		scheme
+			.validate(url)
 			.then(() => {
-				getRSS(url).then(parse)
+				getRSS(url)
+					.then(parse)
 					.then(console.log)
 					.then(() => {
 						watchedState.rssUrls.push(url);
@@ -75,8 +76,9 @@ export default () => {
 						scheme = string().url().required().notOneOf(watchedState.rssUrls);
 						watchedState.rssForm.state = 'successfully';
 					})
-					.catch(() => {
-						watchedState.rssForm.error = 'form.messages.errors.notFoundRssContent';
+					.catch((err) => {
+						watchedState.rssForm.error =
+							'form.messages.errors.notFoundRssContent';
 						watchedState.rssForm.state = 'invalid';
 					});
 			})

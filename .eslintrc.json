@@ -12,7 +12,14 @@
         "sourceType": "module"
     },
     "rules": {
-      "indent": ["error", "tab"],
+      "indent": [
+        "error",
+        "tab", 
+        { 
+					"SwitchCase": 1,
+					"FunctionExpression": {"parameters": "first"} 
+				}
+    	],
       "no-tabs":"off",
 			"object-curly-spacing": ["error", "always"],
 			"max-len": "off"

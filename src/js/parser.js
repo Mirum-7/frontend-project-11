@@ -1,3 +1,27 @@
+const parsItem = (item) => {
+	const titleElement = item.querySelector('title');
+	const title = titleElement.textContent;
+
+	const descriptionElement = item.querySelector('description');
+	const description = descriptionElement.textContent;
+
+	const linkElement = item.querySelector('link');
+	const link = linkElement.textContent;
+
+	const creatorElement = item.querySelector('creator');
+	const creator = creatorElement.textContent;
+
+	const dateElement = item.querySelector('pubDate');
+	const date = new Date(dateElement.textContent);
+
+	return {
+		title,
+		description,
+		link,
+		creator,
+		date: date,
+	};
+};
 
 export default (data) => {
 	const parser = new DOMParser();
@@ -8,9 +32,18 @@ export default (data) => {
 		throw new Error('RSS not found');
 	}
 
-	const channelTitle = ctx.querySelector('title');
-	const channelDescription = ctx.querySelector('description');
-	const items = ctx.querySelectorAll('item');
+	const channelTitleElement = ctx.querySelector('title');
+	const channelTitle = channelTitleElement.textContent;
 
-	return items;
+	const channelDescriptionElement = ctx.querySelector('description');
+	const channelDescription = channelDescriptionElement.textContent;
+
+	const itemElements = Array.from(ctx.querySelectorAll('item'));
+	const items =	itemElements.map(parsItem);
+
+	return {
+		title: channelTitle,
+		description: channelDescription,
+		items,
+	};
 };
