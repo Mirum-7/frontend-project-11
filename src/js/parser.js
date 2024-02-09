@@ -1,3 +1,4 @@
+import { uniqueId } from 'lodash';
 
 
 const parsItem = (item) => {
@@ -14,6 +15,7 @@ const parsItem = (item) => {
 		title,
 		description,
 		link,
+		id: uniqueId(),
 	};
 };
 
@@ -35,9 +37,13 @@ export default (data) => {
 	const itemElements = Array.from(ctx.querySelectorAll('item'));
 	const items =	itemElements.map(parsItem);
 
-	return {
+	const channel = {
 		title: channelTitle,
 		description: channelDescription,
+	};
+
+	return {
+		channel,
 		items,
 	};
 };

@@ -52,12 +52,12 @@ const render = (state, elements, i18n) => {
 
 	const [setDanger, setSuccess, clearMessage] = createFeedbackSetters(elements.feedback)('text-danger', 'text-success');
 	const handler = (path, value, prevValue) => {
-		console.log(path);
+		console.log(path, value); // TODO: remove
 		switch (path) {
-			case 'rssForm.state':
+			case 'form.state':
 				switch (value) {
 					case 'invalid':
-						setDanger(i18n.t(state.rssForm.error));
+						setDanger(i18n.t(state.form.error));
 						setInvalidInput();
 						enableBtn();
 						enableInput();

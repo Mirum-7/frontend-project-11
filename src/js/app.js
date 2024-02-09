@@ -34,12 +34,13 @@ export default () => {
 	});
 
 	const state = {
-		rssForm: {
+		form: {
 			state: null,
 			error: '',
 		},
-		rssUrls: [],
-		rssChannels: [],
+		urls: [],
+		channels: [],
+		posts: [],
 	};
 
 	const elements = {
@@ -47,6 +48,7 @@ export default () => {
 		urlInput: document.getElementById('rss-url-input'),
 		feedback: document.querySelector('.feedback'),
 		submitBtn: document.getElementById('form-submit'),
+
 		main: document.querySelector('.main'),
 		feedsList: document.querySelector('.feeds-list'),
 		postsList: document.querySelector('.posts-list'),
@@ -64,28 +66,29 @@ export default () => {
 		const formData = new FormData(e.target);
 		const url = formData.get('rss-url').trim();
 
-		watchedState.rssForm.state = 'sending';
+		watchedState.form.state = 'sending';
 		scheme
 			.validate(url)
 			.then(() => {
 				getRSS(url)
 					.then(parse)
-					.then((channel) => {
-						watchedState.rssChannels.push(channel);
-						watchedState.rssUrls.push(url);
+					.then(({ channel, items }) => {
+						watchedState.posts.push(...items);
+						watchedState.channels.push(channel);
+						watchedState.urls.push(url);
 						// Добавлял объявление валидатора в начало, но state.rssUrls передается не по ссылке, а копируется его значение
 						// Поэтому добавил его сюда, чтобы он копировал новое значение при добавление ссылок
-						scheme = string().url().required().notOneOf(watchedState.rssUrls);
-						watchedState.rssForm.state = 'successfully';
+						scheme = string().url().required().notOneOf(watchedState.urls);
+						watchedState.form.state = 'successfully';
 					})
 					.catch((err) => {
-						watchedState.rssForm.error = 'form.messages.errors.notFoundRssContent';
-						watchedState.rssForm.state = 'invalid';
+						watchedState.form.error = 'form.messages.errors.notFoundRssContent';
+						watchedState.form.state = 'invalid';
 					});
 			})
 			.catch((err) => {
-				watchedState.rssForm.error = err.errors[0];
-				watchedState.rssForm.state = 'invalid';
+				watchedState.form.error = err.errors[0];
+				watchedState.form.state = 'invalid';
 			});
 	});
 };
