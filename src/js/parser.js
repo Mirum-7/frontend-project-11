@@ -1,3 +1,5 @@
+
+
 const parsItem = (item) => {
 	const titleElement = item.querySelector('title');
 	const title = titleElement.textContent;
@@ -8,18 +10,10 @@ const parsItem = (item) => {
 	const linkElement = item.querySelector('link');
 	const link = linkElement.textContent;
 
-	const creatorElement = item.querySelector('creator');
-	const creator = creatorElement.textContent;
-
-	const dateElement = item.querySelector('pubDate');
-	const date = new Date(dateElement.textContent);
-
 	return {
 		title,
 		description,
 		link,
-		creator,
-		date: date,
 	};
 };
 

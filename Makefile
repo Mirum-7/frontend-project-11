@@ -12,3 +12,7 @@ lint:
 
 fix:
 	npx eslint --fix .
+
+commit: fix
+	git add .
+	git commit -m '${m}'

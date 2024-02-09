@@ -11,9 +11,7 @@ const getRSS = (url) => {
 	return axios
 		.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
 		.then((response) => response.data)
-		.then((data) => {
-			return data.contents;
-		});
+		.then((data) => data.contents);
 };
 
 export default () => {
@@ -41,6 +39,7 @@ export default () => {
 			error: '',
 		},
 		rssUrls: [],
+		rssChannels: [],
 	};
 
 	const elements = {
@@ -48,6 +47,9 @@ export default () => {
 		urlInput: document.getElementById('rss-url-input'),
 		feedback: document.querySelector('.feedback'),
 		submitBtn: document.getElementById('form-submit'),
+		main: document.querySelector('.main'),
+		feedsList: document.querySelector('.feeds-list'),
+		postsList: document.querySelector('.posts-list'),
 	};
 
 	elements.submitBtn.value = i18n.t('form.submitBtn');
@@ -60,7 +62,7 @@ export default () => {
 		e.preventDefault();
 
 		const formData = new FormData(e.target);
-		const url = formData.get('rss-url');
+		const url = formData.get('rss-url').trim();
 
 		watchedState.rssForm.state = 'sending';
 		scheme
@@ -68,8 +70,8 @@ export default () => {
 			.then(() => {
 				getRSS(url)
 					.then(parse)
-					.then(console.log)
-					.then(() => {
+					.then((channel) => {
+						watchedState.rssChannels.push(channel);
 						watchedState.rssUrls.push(url);
 						// Добавлял объявление валидатора в начало, но state.rssUrls передается не по ссылке, а копируется его значение
 						// Поэтому добавил его сюда, чтобы он копировал новое значение при добавление ссылок
@@ -77,8 +79,7 @@ export default () => {
 						watchedState.rssForm.state = 'successfully';
 					})
 					.catch((err) => {
-						watchedState.rssForm.error =
-							'form.messages.errors.notFoundRssContent';
+						watchedState.rssForm.error = 'form.messages.errors.notFoundRssContent';
 						watchedState.rssForm.state = 'invalid';
 					});
 			})
