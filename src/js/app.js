@@ -1,19 +1,19 @@
 import i18next from 'i18next';
+import { differenceWith, isEqual, uniqueId } from 'lodash';
 import onChange from 'on-change';
 import { setLocale, string } from 'yup';
 import resources from './locals/resources';
 import parse from './parser';
-import Watcher from './watcher';
 import View from './view';
-import { differenceWith, isEqual, uniqueId } from 'lodash';
+import Watcher from './watcher';
 
-const postsIsEqual = (post, other) => {
-	return post.title === other.title &&
-		post.description === other.description &&
-		post.link === other.link;
+export const getNewItemsBy = (newArray, oldArray, prop) => {
+	return differenceWith(newArray, oldArray, (value, other) => {
+		return isEqual(value[prop], other[prop]);
+	});
 };
 
-export default () => {
+const app = () => {
 	// yup
 	setLocale({
 		mixed: {
@@ -72,11 +72,13 @@ export default () => {
 
 	watcher.start((data) => {
 		const { items } = parse(data);
-		const uniqItems = differenceWith(items, state.posts, postsIsEqual);
+		const uniqItems = getNewItemsBy(items, state.posts, 'data');
+
 		uniqItems.forEach((item) => {
 			item.id = uniqueId();
 			item.visited = false;
 		});
+
 		watchedState.posts.push(...uniqItems);
 	});
 
@@ -85,7 +87,7 @@ export default () => {
 		e.preventDefault();
 
 		const formData = new FormData(e.target);
-		const url = formData.get('rss-url').trim();
+		const url = formData.get('rss-url').trim(); // TODO: remove trim()
 
 		watchedState.form.state = 'sending';
 		scheme
@@ -120,3 +122,5 @@ export default () => {
 			});
 	});
 };
+
+export default app;

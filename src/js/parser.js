@@ -10,9 +10,11 @@ const parsItem = (item) => {
 	const link = linkElement.textContent;
 
 	return {
-		title,
-		description,
-		link,
+		data: {
+			title,
+			description,
+			link,
+		},
 	};
 };
 
@@ -32,7 +34,7 @@ export default (data) => {
 	const channelDescription = channelDescriptionElement.textContent;
 
 	const itemElements = Array.from(ctx.querySelectorAll('item'));
-	const items =	itemElements.map(parsItem);
+	const items =	itemElements.map(parsItem).reverse();
 
 	const channel = {
 		title: channelTitle,
