@@ -1,20 +1,20 @@
-import axios from 'axios';
 import i18next from 'i18next';
 import onChange from 'on-change';
 import { setLocale, string } from 'yup';
 import resources from './locals/resources';
 import parse from './parser';
-import render from './render';
+import Watcher from './watcher';
+import View from './view';
+import { differenceWith, isEqual, uniqueId } from 'lodash';
 
-
-const getRSS = (url) => {
-	return axios
-		.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
-		.then((response) => response.data)
-		.then((data) => data.contents);
+const postsIsEqual = (post, other) => {
+	return post.title === other.title &&
+		post.description === other.description &&
+		post.link === other.link;
 };
 
 export default () => {
+	// yup
 	setLocale({
 		mixed: {
 			notOneOf: 'form.messages.errors.urlActuallyExist',
@@ -26,13 +26,16 @@ export default () => {
 
 	let scheme = string().url().required();
 
+	// i18next
 	const i18n = i18next.createInstance();
 	i18n.init({
 		lng: 'ru',
-		debug: true,
+		debug: false,
 		resources,
 	});
 
+
+	// state
 	const state = {
 		form: {
 			state: null,
@@ -43,6 +46,7 @@ export default () => {
 		posts: [],
 	};
 
+	// dom elements
 	const elements = {
 		form: document.querySelector('.rss-form'),
 		urlInput: document.getElementById('rss-url-input'),
@@ -54,11 +58,28 @@ export default () => {
 		postsList: document.querySelector('.posts-list'),
 	};
 
+	// add text
 	elements.submitBtn.value = i18n.t('form.submitBtn');
 	elements.urlInput.placeholder = i18n.t('form.input');
 	elements.urlInput.nextElementSibling.textContent = i18n.t('form.input');
 
-	const watchedState = onChange(state, render(state, elements, i18n));
+	// watcher
+	const watcher = new Watcher();
+	// view
+	const view = new View(elements, state, i18n);
+	// watched state
+	const watchedState = onChange(state, view.render.bind(view));
+
+	watcher.start((data) => {
+		const { items } = parse(data);
+		const uniqItems = differenceWith(items, state.posts, postsIsEqual);
+		uniqItems.forEach((item) => {
+			item.id = uniqueId();
+			item.visited = false;
+		});
+		watchedState.posts.push(...uniqItems);
+	});
+
 
 	elements.form.addEventListener('submit', (e) => {
 		e.preventDefault();
@@ -70,23 +91,30 @@ export default () => {
 		scheme
 			.validate(url)
 			.then(() => {
-				getRSS(url)
+				watcher.once(url)
 					.then(parse)
 					.then(({ channel, items }) => {
+						items.forEach((item) => {
+							item.id = uniqueId();
+							item.visited = false;
+						});
 						watchedState.posts.push(...items);
 						watchedState.channels.push(channel);
+
 						watchedState.urls.push(url);
-						// Добавлял объявление валидатора в начало, но state.rssUrls передается не по ссылке, а копируется его значение
-						// Поэтому добавил его сюда, чтобы он копировал новое значение при добавление ссылок
+						watcher.add(url);
+
 						scheme = string().url().required().notOneOf(watchedState.urls);
 						watchedState.form.state = 'successfully';
 					})
 					.catch((err) => {
+						console.error(err);
 						watchedState.form.error = 'form.messages.errors.notFoundRssContent';
 						watchedState.form.state = 'invalid';
 					});
 			})
 			.catch((err) => {
+				console.error(err);
 				watchedState.form.error = err.errors[0];
 				watchedState.form.state = 'invalid';
 			});

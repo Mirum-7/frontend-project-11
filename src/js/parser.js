@@ -1,5 +1,3 @@
-import { uniqueId } from 'lodash';
-
 
 const parsItem = (item) => {
 	const titleElement = item.querySelector('title');
@@ -15,7 +13,6 @@ const parsItem = (item) => {
 		title,
 		description,
 		link,
-		id: uniqueId(),
 	};
 };
 
