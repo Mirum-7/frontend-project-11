@@ -2,26 +2,47 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Webpack App</title>
+    <title>RSS app</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1">
   </head>
   <body>
-		<div class="modal fade show" id="modal" aria-labelledby="modal" style="display: block;" aria-modal="true" role="dialog">
+		<div
+			class="modal fade d-none"
+			id="modal"
+			aria-labelledby="modal"
+			style="display: block;"
+			aria-modal="true"
+			role="dialog"
+			tabindex='-1'
+		>
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
 						<h5 class="modal-title">Lorem ipsum 2024-02-10T14:14:00Z</h5>
-						<button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+						<button
+							type="button"
+							class="btn-close close"
+							data-bs-dismiss="modal"
+							aria-label="Close"
+						></button>
 					</div>
 					<div class="modal-body text-break">Aute nisi culpa tempor minim ut qui do adipisicing.</div>
 					<div class="modal-footer">
-						<a class="btn btn-primary full-article" href="http://example.com/test/1707574440" role="button" target="_blank" rel="noopener noreferrer" tabindex='1'>Читать полностью </a>
+						<a
+							class="btn btn-primary full-article"
+							href="http://example.com/test/1707574440"
+							role="button"
+							target="_blank"
+							data-bs-link="modal"
+						>
+							Читать полностью
+						</a>
 						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="modal-backdrop fade show"></div>
+		<div class="modal-backdrop fade d-none"></div>
 		<header class="header bg-dark text-white">
 			<div class="container-fluid p-5">
 				<div class="row">
@@ -32,13 +53,13 @@
 							<div class="row">
 								<div class="col">
 									<div class="form-floating">
-										<input 
-											required 
-											autofocus 
-											autocomplete="off" 
-											placeholder="RSS ссылка" 
-											type="text" 
-											name="rss-url" 
+										<input
+											required
+											autofocus
+											autocomplete="off"
+											placeholder="RSS ссылка"
+											type="text"
+											name="rss-url"
 											id="rss-url-input"
 											class="w-100 form-control"
 										>

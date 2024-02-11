@@ -10,8 +10,12 @@ class Watcher {
 	}
 
 	start(callback) {
+		setTimeout(() => this.check(callback), this.#interval);
+	}
+
+	check(callback) {
 		this.#urls.forEach((url) => {
-			this.once(url)
+			this.get(url)
 				.then(callback)
 				.catch((err) => {
 					console.error(err);
@@ -20,10 +24,10 @@ class Watcher {
 				});
 		});
 
-		setTimeout(() => this.start(callback), this.#interval);
+		setTimeout(() => this.check(callback), this.#interval);
 	}
 
-	once(url) {
+	get(url) {
 		return axios
 			.get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
 			.then((response) => response.data)

@@ -44,46 +44,79 @@ const app = () => {
 		urls: [],
 		channels: [],
 		posts: [],
+		modal: {
+			data: {
+				title: '',
+				description: '',
+				link: '',
+			},
+			open: false,
+		},
 	};
 
 	// dom elements
-	const elements = {
-		form: document.querySelector('.rss-form'),
-		urlInput: document.getElementById('rss-url-input'),
-		feedback: document.querySelector('.feedback'),
-		submitBtn: document.getElementById('form-submit'),
+	const elements = { // TODO: do from {}, containers {}, modal {},
+		form: {
+			self: document.querySelector('.rss-form'),
+			urlInput: document.getElementById('rss-url-input'),
+			feedback: document.querySelector('.feedback'),
+			submitBtn: document.getElementById('form-submit'),
+		},
 
-		main: document.querySelector('.main'),
-		feedsList: document.querySelector('.feeds-list'),
-		postsList: document.querySelector('.posts-list'),
+		containers: {
+			main: document.querySelector('.main'),
+			feedsList: document.querySelector('.feeds-list'),
+			postsList: document.querySelector('.posts-list'),
+		},
+
+		modal: {
+			self: document.querySelector('#modal'),
+			closeBtns: document.querySelectorAll('[data-bs-dismiss]'),
+			link: document.querySelector('[data-bs-link]'),
+			back: document.querySelector('.modal-backdrop'),
+
+			data: {
+				title: document.querySelector('.modal-title'),
+				description: document.querySelector('.modal-body'),
+			},
+		},
 	};
 
 	// add text
-	elements.submitBtn.value = i18n.t('form.submitBtn');
-	elements.urlInput.placeholder = i18n.t('form.input');
-	elements.urlInput.nextElementSibling.textContent = i18n.t('form.input');
+	elements.form.submitBtn.value = i18n.t('form.submitBtn');
+	elements.form.urlInput.placeholder = i18n.t('form.input');
+	elements.form.urlInput.nextElementSibling.textContent = i18n.t('form.input');
 
 	// watcher
 	const watcher = new Watcher();
 	// view
-	const view = new View(elements, state, i18n);
+	const view = new View();
 	// watched state
 	const watchedState = onChange(state, view.render.bind(view));
+	// init view
+	view.init(elements, watchedState, i18n);
 
 	watcher.start((data) => {
 		const { items } = parse(data);
-		const uniqItems = getNewItemsBy(items, state.posts, 'data');
-
-		uniqItems.forEach((item) => {
+		const newItems = getNewItemsBy(items, state.posts, 'data');
+		newItems.forEach((item) => {
 			item.id = uniqueId();
 			item.visited = false;
 		});
 
-		watchedState.posts.push(...uniqItems);
+		if (newItems.length !== 0) {
+			watchedState.posts.push(...newItems);
+		}
+	});
+
+	elements.modal.closeBtns.forEach((btn) => {
+		btn.addEventListener('click', (e) => {
+			watchedState.modal.open = false;
+		});
 	});
 
 
-	elements.form.addEventListener('submit', (e) => {
+	elements.form.self.addEventListener('submit', (e) => {
 		e.preventDefault();
 
 		const formData = new FormData(e.target);
@@ -93,7 +126,7 @@ const app = () => {
 		scheme
 			.validate(url)
 			.then(() => {
-				watcher.once(url)
+				watcher.get(url)
 					.then(parse)
 					.then(({ channel, items }) => {
 						items.forEach((item) => {

@@ -21,9 +21,10 @@ const config = {
 		filename: '[name].[contenthash:8].js',
 	},
 	devServer: {
-		host: '0.0.0.0',
+		host: 'localhost',
 		port: 3000,
 		hot: true,
+		open: false,
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
