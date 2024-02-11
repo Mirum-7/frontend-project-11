@@ -136,6 +136,7 @@ class View {
 
 				this.#state.modal.data.title = currentItem.data.title;
 				this.#state.modal.data.description = currentItem.data.description;
+				console.log(currentItem.data.link);
 				this.#state.modal.link = currentItem.data.link;
 
 				this.#state.modal.open = true;
@@ -156,7 +157,7 @@ class View {
 
 				modal.data.title.textContent = this.#state.modal.data.title;
 				modal.data.description.textContent = this.#state.modal.data.description;
-				modal.link.href = this.#state.modal.data.link;
+				modal.link.href = this.#state.modal.link;
 			} else {
 				modal.self.classList.remove('show');
 				modal.self.classList.add('d-none');
