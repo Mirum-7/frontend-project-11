@@ -16,3 +16,6 @@ fix:
 commit: fix
 	git add .
 	git commit -m '${m}'
+
+deploy: commit
+	git push

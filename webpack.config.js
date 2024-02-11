@@ -29,6 +29,7 @@ const config = {
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: paths.html,
+			favicon: path.resolve(__dirname, 'public', 'icon', 'favicon.ico'),
 		}),
 
 		new MiniCssExtractPlugin({
@@ -49,10 +50,6 @@ const config = {
 					'css-loader',
 					'sass-loader',
 				],
-			},
-			{
-				test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
-				type: 'asset',
 			},
 		],
 	},
