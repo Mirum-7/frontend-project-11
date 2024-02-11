@@ -2,6 +2,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -29,7 +30,11 @@ const config = {
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: paths.html,
-			favicon: path.resolve(__dirname, 'public', 'icon', 'favicon.ico'),
+		}),
+
+		new FaviconsWebpackPlugin({
+			logo: path.resolve(__dirname, 'public', 'icon', 'favicon.ico'),
+			mode: 'webapp',
 		}),
 
 		new MiniCssExtractPlugin({
