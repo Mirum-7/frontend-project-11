@@ -6,18 +6,21 @@ const HTML = `
 `;
 
 class PostItem {
-	constructor(data, modal) {
+	constructor(data, modal, local) {
 		this.state = onChange({
 			visited: false,
 			data,
 		}, this.render.bind(this));
 
+		this.local = local;
 		this.elements = this.create(modal);
 	}
 
 	create(modal) {
 		const item = document.createElement('li');
-		item.classList.add('list-group-item',
+		item.classList.add(
+			'post-item',
+			'list-group-item',
 			'd-flex',
 			'justify-content-between',
 			'align-items-start',
@@ -32,6 +35,7 @@ class PostItem {
 		link.href = this.state.data.link;
 
 		const button = item.querySelector('button');
+		button.textContent = this.local.t('watchButton');
 
 		link.addEventListener('click', () => {
 			this.state.visited = true;

@@ -7,8 +7,9 @@ import parse from './parser';
 import View from './view';
 import Watcher from './watcher';
 import Modal from './components/modal';
+import { AxiosError } from 'axios';
 
-export const getNewItemsBy = (newArray, oldArray, prop) => {
+const getNewItemsBy = (newArray, oldArray, prop) => {
 	return differenceWith(newArray, oldArray, (value, other) => {
 		return isEqual(value[prop], other[prop]);
 	});
@@ -37,7 +38,7 @@ const app = () => {
 	});
 
 	// Components
-	const modal = new Modal();
+	const modal = new Modal(i18n);
 
 	document.body.prepend(modal.getBack());
 	document.body.prepend(modal.getElement());
@@ -79,12 +80,11 @@ const app = () => {
 
 	// watcher
 	const watcher = new Watcher();
-	// view
-	const view = new View();
+	// init view
+	const view = new View(elements, state, i18n);
 	// watched state
 	const watchedState = onChange(state, view.render.bind(view));
-	// init view
-	view.init(elements, watchedState, i18n);
+
 
 	watcher.start((data) => {
 		const { items } = parse(data);
@@ -124,13 +124,16 @@ const app = () => {
 						watchedState.form.state = 'successfully';
 					})
 					.catch((err) => {
-						console.error(err);
-						watchedState.form.error = 'form.messages.errors.notFoundRssContent';
+						console.log(err);
+						if (err instanceof AxiosError) {
+							watchedState.form.error = 'form.messages.errors.network';
+						} else {
+							watchedState.form.error = 'form.messages.errors.notFoundRssContent';
+						}
 						watchedState.form.state = 'invalid';
 					});
 			})
 			.catch((err) => {
-				console.error(err);
 				watchedState.form.error = err.errors[0];
 				watchedState.form.state = 'invalid';
 			});

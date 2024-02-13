@@ -1,14 +1,3 @@
-/**
- * TODO:
- * - remake render
- * - easy way to Watched state
- * - remake handlers
- * - render() => watchedStateHandler()
- * - this = View
- * - WatchedState = this
-*/
-
-import { getNewItemsBy } from './app';
 import PostItem from './components/postItem';
 
 const createFeed = (channel) => {
@@ -33,21 +22,20 @@ class View {
 	#state;
 	#i18n;
 
-	init(elements, state, i18n) {
+	constructor(elements, state, i18n) {
 		this.#elements = elements;
 		this.#state = state;
 		this.#i18n = i18n;
 	}
 
-	render(path, value, prevValue) {
+	render(path, value, prevValue, applyData) {
 		const {
 			form,
 			containers,
 			modal,
 		} = this.#elements;
 
-		// console.log(path, value); // TODO: remove
-		if (path === 'form.state') { // render form // TODO: replace to switch
+		if (path === 'form.state') {
 			switch (value) {
 				case 'invalid':
 					form.feedback.classList.remove('text-success');
@@ -86,14 +74,16 @@ class View {
 					throw new Error(`StateError: unknown state: ${value}`);
 			}
 		} else if (path === 'channels') { // render feeds container
+			const lastFeed = applyData.args[0];
+
 			containers.main.classList.remove('d-none');
-			containers.feedsList.append(createFeed(value.at(-1)));
+			containers.feedsList.append(createFeed(lastFeed));
 		} else if (path === 'posts') {
-			const newItems = getNewItemsBy(value, prevValue, 'data');
+			const newItems = applyData.args;
 
 			newItems
 				.map((item) => {
-					const element = new PostItem(item.data, modal);
+					const element = new PostItem(item.data, modal, this.#i18n);
 					return element.getElement();
 				})
 				.forEach((item) => {

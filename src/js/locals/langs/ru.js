@@ -14,6 +14,10 @@ export default {
 			submitBtn: 'Добавить',
 			input: 'RSS ссылка',
 		},
+		modal: {
+			link: 'Читать полностью',
+			closeButton: 'Закрыть',
+		},
 		watchButton: 'Просмотр',
 	},
 };

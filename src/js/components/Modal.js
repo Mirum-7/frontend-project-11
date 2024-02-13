@@ -29,7 +29,7 @@ const HTML = `
 </div>`;
 
 class Modal {
-	constructor() {
+	constructor(local) {
 		this.state = onChange({
 			open: false,
 			data: {
@@ -39,6 +39,7 @@ class Modal {
 			},
 		}, this.render.bind(this));
 
+		this.local = local;
 		this.elements = this.create();
 	}
 
@@ -55,15 +56,20 @@ class Modal {
 
 		const closeBtns = modal.querySelectorAll('[data-bs-dismiss]');
 
+		closeBtns[1].textContent = this.local.t('modal.closeButton');
+
 		closeBtns.forEach((btn) => {
 			btn.addEventListener('click', () => this.close());
 		});
+
+		const link = modal.querySelector('[data-bs-link]');
+		link.textContent = this.local.t('modal.link');
 
 		return {
 			self: modal,
 			back,
 			closeBtns,
-			link: modal.querySelector('[data-bs-link]'),
+			link,
 
 			title: modal.querySelector('.modal-title'),
 			body: modal.querySelector('.modal-body'),
