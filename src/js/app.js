@@ -74,7 +74,7 @@ const app = () => {
 	};
 
 	// add text
-	elements.form.submitBtn.value = i18n.t('form.submitBtn');
+	elements.form.submitBtn.textContent = i18n.t('form.submitBtn');
 	elements.form.urlInput.placeholder = i18n.t('form.input');
 	elements.form.urlInput.nextElementSibling.textContent = i18n.t('form.input');
 
