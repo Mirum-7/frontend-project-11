@@ -55,7 +55,6 @@ class Modal {
 		back.classList.add('modal-backdrop', 'fade', 'd-none');
 
 		const closeBtns = modal.querySelectorAll('[data-bs-dismiss]');
-
 		closeBtns[1].textContent = this.local.t('modal.closeButton');
 
 		closeBtns.forEach((btn) => {
