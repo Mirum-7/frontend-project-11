@@ -124,7 +124,6 @@ const app = () => {
 						watchedState.form.state = 'successfully';
 					})
 					.catch((err) => {
-						console.log(err);
 						if (err instanceof AxiosError) {
 							watchedState.form.error = 'form.messages.errors.network';
 						} else {

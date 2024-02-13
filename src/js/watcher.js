@@ -18,8 +18,6 @@ class Watcher {
 			this.get(url)
 				.then(callback)
 				.catch((err) => {
-					console.error(err);
-					console.log(`removed: ${url}`);
 					this.remove(url);
 				});
 		});
