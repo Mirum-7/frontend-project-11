@@ -2,7 +2,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 
 const isProduction = process.env.NODE_ENV == 'production';
 
@@ -24,19 +23,11 @@ const config = {
 	devServer: {
 		host: 'localhost',
 		port: 3000,
-		hot: true,
-		open: false,
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
 			template: paths.html,
 		}),
-
-		new FaviconsWebpackPlugin({
-			logo: path.resolve(__dirname, 'public', 'icon', 'favicon.ico'),
-			mode: 'webapp',
-		}),
-
 		new MiniCssExtractPlugin({
 			filename: 'css/[name].[contenthash:8].css',
 			chunkFilename: 'css/[name].[contenthash:8].css',
@@ -55,6 +46,10 @@ const config = {
 					'css-loader',
 					'sass-loader',
 				],
+			},
+			{
+				test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
+				type: 'asset',
 			},
 		],
 	},
