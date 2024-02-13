@@ -1,13 +1,13 @@
+import { AxiosError } from 'axios';
 import i18next from 'i18next';
 import { differenceWith, isEqual, uniqueId } from 'lodash';
 import onChange from 'on-change';
 import { setLocale, string } from 'yup';
+import Modal from './components/modal';
 import resources from './locals/resources';
 import parse from './parser';
 import View from './view';
 import Watcher from './watcher';
-import Modal from './components/modal';
-import { AxiosError } from 'axios';
 
 const getNewItemsBy = (newArray, oldArray, prop) => {
 	return differenceWith(newArray, oldArray, (value, other) => {
