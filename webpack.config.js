@@ -23,6 +23,7 @@ const config = {
 	devServer: {
 		host: 'localhost',
 		port: 3000,
+		hot: true,
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
@@ -39,6 +40,10 @@ const config = {
 	devtool: isProduction ? false : 'eval-cheap-module-source-map',
 	module: {
 		rules: [
+			{
+				test: /\.(js|jsx)$/i,
+				loader: 'babel-loader',
+			},
 			{
 				test: /\.s[ac]ss$/i,
 				use: [

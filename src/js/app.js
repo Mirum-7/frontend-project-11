@@ -6,6 +6,7 @@ import resources from './locals/resources';
 import parse from './parser';
 import View from './view';
 import Watcher from './watcher';
+import Modal from './components/modal';
 
 export const getNewItemsBy = (newArray, oldArray, prop) => {
 	return differenceWith(newArray, oldArray, (value, other) => {
@@ -18,6 +19,7 @@ const app = () => {
 	setLocale({
 		mixed: {
 			notOneOf: 'form.messages.errors.urlActuallyExist',
+			required: 'form.messages.errors.emptyValue',
 		},
 		string: {
 			url: 'form.messages.errors.invalidUrl',
@@ -34,9 +36,15 @@ const app = () => {
 		resources,
 	});
 
+	// Components
+	const modal = new Modal();
+
+	document.body.prepend(modal.getBack());
+	document.body.prepend(modal.getElement());
 
 	// state
 	const state = {
+		lang: 'ru',
 		form: {
 			state: null,
 			error: '',
@@ -44,18 +52,10 @@ const app = () => {
 		urls: [],
 		channels: [],
 		posts: [],
-		modal: {
-			data: {
-				title: '',
-				description: '',
-				link: '',
-			},
-			open: false,
-		},
 	};
 
-	// dom elements
-	const elements = { // TODO: do from {}, containers {}, modal {},
+	// elements
+	const elements = {
 		form: {
 			self: document.querySelector('.rss-form'),
 			urlInput: document.getElementById('rss-url-input'),
@@ -69,17 +69,7 @@ const app = () => {
 			postsList: document.querySelector('.posts-list'),
 		},
 
-		modal: {
-			self: document.querySelector('#modal'),
-			closeBtns: document.querySelectorAll('[data-bs-dismiss]'),
-			link: document.querySelector('[data-bs-link]'),
-			back: document.querySelector('.modal-backdrop'),
-
-			data: {
-				title: document.querySelector('.modal-title'),
-				description: document.querySelector('.modal-body'),
-			},
-		},
+		modal,
 	};
 
 	// add text
@@ -101,7 +91,6 @@ const app = () => {
 		const newItems = getNewItemsBy(items, state.posts, 'data');
 		newItems.forEach((item) => {
 			item.id = uniqueId();
-			item.visited = false;
 		});
 
 		if (newItems.length !== 0) {
@@ -109,18 +98,11 @@ const app = () => {
 		}
 	});
 
-	elements.modal.closeBtns.forEach((btn) => {
-		btn.addEventListener('click', (e) => {
-			watchedState.modal.open = false;
-		});
-	});
-
-
 	elements.form.self.addEventListener('submit', (e) => {
 		e.preventDefault();
 
 		const formData = new FormData(e.target);
-		const url = formData.get('rss-url').trim(); // TODO: remove trim()
+		const url = formData.get('rss-url');
 
 		watchedState.form.state = 'sending';
 		scheme
@@ -131,7 +113,6 @@ const app = () => {
 					.then(({ channel, items }) => {
 						items.forEach((item) => {
 							item.id = uniqueId();
-							item.visited = false;
 						});
 						watchedState.posts.push(...items);
 						watchedState.channels.push(channel);

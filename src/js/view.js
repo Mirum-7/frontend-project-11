@@ -3,10 +3,13 @@
  * - remake render
  * - easy way to Watched state
  * - remake handlers
- *
+ * - render() => watchedStateHandler()
+ * - this = View
+ * - WatchedState = this
 */
 
 import { getNewItemsBy } from './app';
+import PostItem from './components/postItem';
 
 const createFeed = (channel) => {
 	const container = document.createElement('li');
@@ -21,37 +24,6 @@ const createFeed = (channel) => {
 	description.textContent = channel.description;
 
 	container.append(title, description);
-
-	return container;
-};
-
-const createChannelItem = (item, linkHandler, buttonHandler) => {
-	const container = document.createElement('li');
-	container.classList.add('list-group-item',
-		'd-flex',
-		'justify-content-between',
-		'align-items-start',
-		'border-0',
-		'border-end-0',
-	);
-
-	const link = document.createElement('a');
-	link.classList.add('fw-bold');
-	link.setAttribute('target', '_blank');
-	link.setAttribute('href', item.data.link);
-	link.dataset.id = item.id;
-	link.textContent = item.data.title;
-
-	link.addEventListener('click', linkHandler);
-
-	const button = document.createElement('button');
-	button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-	button.textContent = 'Просмотр';
-	button.dataset.id = item.id;
-
-	button.addEventListener('click', buttonHandler);
-
-	container.append(link, button);
 
 	return container;
 };
@@ -119,58 +91,14 @@ class View {
 		} else if (path === 'posts') {
 			const newItems = getNewItemsBy(value, prevValue, 'data');
 
-			const linkHandler = (e) => {
-				const target = e.target;
-				const dataId = target.dataset.id;
-				const currentItem = this.#state.posts.find((item) => item.id == dataId);
-
-				currentItem.visited = true;
-			};
-
-			const buttonHandler = (e) => {
-				const target = e.target;
-				const dataId = target.dataset.id;
-				const currentItem = this.#state.posts.find((item) => item.id == dataId);
-
-				currentItem.visited = true;
-
-				this.#state.modal.data.title = currentItem.data.title;
-				this.#state.modal.data.description = currentItem.data.description;
-				console.log(currentItem.data.link);
-				this.#state.modal.link = currentItem.data.link;
-
-				this.#state.modal.open = true;
-			};
-
 			newItems
-				.map((item) => createChannelItem(item, linkHandler, buttonHandler))
+				.map((item) => {
+					const element = new PostItem(item.data, modal);
+					return element.getElement();
+				})
 				.forEach((item) => {
 					containers.postsList.prepend(item);
 				});
-		} else if (path === 'modal.open') {
-			if (value) {
-				modal.self.classList.add('show');
-				modal.self.classList.remove('d-none');
-
-				modal.back.classList.add('show');
-				modal.back.classList.remove('d-none');
-
-				modal.data.title.textContent = this.#state.modal.data.title;
-				modal.data.description.textContent = this.#state.modal.data.description;
-				modal.link.href = this.#state.modal.link;
-			} else {
-				modal.self.classList.remove('show');
-				modal.self.classList.add('d-none');
-
-				modal.back.classList.remove('show');
-				modal.back.classList.add('d-none');
-			}
-		} else if (path.match(/posts\.\d+\.visited/)) {
-			const id = +path.split('.')[1] + 1;
-			const link = document.querySelector(`a[data-id="${id}"]`);
-
-			link.classList.add('fw-normal', 'link-secondary');
-			link.classList.remove('fw-bold');
 		}
 	}
 };
