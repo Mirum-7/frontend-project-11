@@ -28,7 +28,7 @@ class Watcher {
   }
 
   get(url) {
-    return this.server
+    return this.#server
       .get(`https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`)
       .then((response) => response.data)
       .then((data) => data.contents);
