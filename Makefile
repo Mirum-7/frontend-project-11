@@ -1,11 +1,8 @@
+install:
+	npm i
+
 build:
 	npm run build:prod
-
-test:
-	npm test
-
-test-coverage:
-	npm test -- --coverage
 
 lint:
 	npx eslint .

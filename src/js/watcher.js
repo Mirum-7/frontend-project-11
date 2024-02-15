@@ -16,15 +16,15 @@ class Watcher {
   }
 
   check(callback) {
-    this.#urls.forEach((url) => {
-      this.get(url)
-        .then(callback)
-        .catch(() => {
-          this.remove(url);
-        });
-    });
+    const promises = this.#urls.map((url) => this.get(url)
+      .then(callback)
+      .catch(() => {
+        this.remove(url);
+      }));
 
-    setTimeout(() => this.check(callback), this.#interval);
+    Promise.all(promises).then(() => {
+      setTimeout(() => this.check(callback), this.#interval);
+    });
   }
 
   get(url) {

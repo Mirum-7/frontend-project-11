@@ -91,6 +91,10 @@ class View {
         .forEach((item) => {
           containers.postsList.prepend(item);
         });
+    } else if (path === 'lang') {
+      form.submitBtn.textContent = this.#i18n.t('form.submitBtn');
+      form.urlInput.placeholder = this.#i18n.t('form.input');
+      form.urlInput.nextElementSibling.textContent = this.#i18n.t('form.input');
     }
   }
 }

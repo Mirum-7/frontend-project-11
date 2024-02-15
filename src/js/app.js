@@ -1,10 +1,8 @@
 import axios, { AxiosError } from 'axios';
-import i18next from 'i18next';
 import { differenceWith, isEqual, uniqueId } from 'lodash';
 import onChange from 'on-change';
 import { setLocale, string } from 'yup';
 import Modal from './components/modal';
-import resources from './locals/resources';
 import parse from './parser';
 import View from './view';
 import Watcher from './watcher';
@@ -15,7 +13,7 @@ const getNewItemsBy = (
   prop,
 ) => differenceWith(newArray, oldArray, (value, other) => isEqual(value[prop], other[prop]));
 
-const app = () => {
+const app = (i18n) => {
   // yup
   setLocale({
     mixed: {
@@ -29,14 +27,6 @@ const app = () => {
 
   let scheme = string().url().required();
 
-  // i18next
-  const i18n = i18next.createInstance();
-  i18n.init({
-    lng: 'ru',
-    debug: false,
-    resources,
-  });
-
   // Components
   const modal = new Modal(i18n);
 
@@ -45,7 +35,7 @@ const app = () => {
 
   // state
   const state = {
-    lang: 'ru',
+    lang: '',
     form: {
       state: null,
       error: '',
@@ -74,9 +64,6 @@ const app = () => {
   };
 
   // add text
-  elements.form.submitBtn.textContent = i18n.t('form.submitBtn');
-  elements.form.urlInput.placeholder = i18n.t('form.input');
-  elements.form.urlInput.nextElementSibling.textContent = i18n.t('form.input');
 
   // watcher
   const watcher = new Watcher(axios);
@@ -84,6 +71,8 @@ const app = () => {
   const view = new View(elements, state, i18n);
   // watched state
   const watchedState = onChange(state, view.render.bind(view));
+
+  watchedState.lang = 'ru';
 
   watcher.start((data) => {
     const { items } = parse(data);
