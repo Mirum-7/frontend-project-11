@@ -68,7 +68,7 @@ const app = (i18n) => {
   // add text
 
   // watcher
-  const watcher = new Watcher(axios);
+  const watcher = new Watcher(axios, state.urls);
   // init view
   const view = new View(elements, state, i18n);
   // watched state
