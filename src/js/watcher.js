@@ -6,8 +6,9 @@ class Watcher {
   #interval;
 
   constructor(server, urls = [], interval = 5000) {
+    // Теперь передаю ссылку на ссылки в состоянии
     this.#server = server;
-    this.#urls = [...urls];
+    this.#urls = urls;
     this.#interval = interval;
   }
 
@@ -19,7 +20,7 @@ class Watcher {
     const promises = this.#urls.map((url) => this.get(url)
       .then(callback)
       .catch(() => {
-        this.remove(url);
+        console.error(`cant get: ${url}`);
       }));
 
     Promise.all(promises).then(() => {

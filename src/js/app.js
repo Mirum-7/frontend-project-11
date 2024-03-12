@@ -13,6 +13,8 @@ const getNewItemsBy = (
   prop,
 ) => differenceWith(newArray, oldArray, (value, other) => isEqual(value[prop], other[prop]));
 
+const createScheme = (notOneOffArr = []) => string().url().required().notOneOf(notOneOffArr);
+
 const app = (i18n) => {
   // yup
   setLocale({
@@ -25,7 +27,7 @@ const app = (i18n) => {
     },
   });
 
-  let scheme = string().url().required();
+  let scheme = createScheme();
 
   // Components
   const modal = new Modal(i18n);
@@ -77,10 +79,10 @@ const app = (i18n) => {
   watcher.start((data) => {
     const { items } = parse(data);
     const newItems = getNewItemsBy(items, state.posts, 'data');
-    newItems.map((item) => ({ ...item, id: uniqueId() }));
+    const itemsWithId = newItems.map((item) => ({ ...item, id: uniqueId(), visited: false }));
 
     if (newItems.length !== 0) {
-      watchedState.posts.push(...newItems);
+      watchedState.posts.push(...itemsWithId);
     }
   });
 
@@ -97,15 +99,14 @@ const app = (i18n) => {
         watcher.get(url)
           .then(parse)
           .then(({ channel, items }) => {
-            items.map((item) => ({ ...item, id: uniqueId() }));
+            const itemsWithId = items.map((item) => ({ ...item, id: uniqueId(), visited: false }));
 
-            watchedState.posts.push(...items);
+            watchedState.posts.push(...itemsWithId);
             watchedState.channels.push(channel);
 
-            watchedState.urls.push(url);
             watcher.add(url);
 
-            scheme = string().url().required().notOneOf(watchedState.urls);
+            scheme = createScheme(watchedState.urls);
             watchedState.form.state = 'successfully';
           })
           .catch((err) => {
@@ -118,6 +119,7 @@ const app = (i18n) => {
           });
       })
       .catch((err) => {
+        // Линетр ругается если написать err.errors[0]
         [watchedState.form.error] = err.errors;
         watchedState.form.state = 'invalid';
       });

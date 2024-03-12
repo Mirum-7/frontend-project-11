@@ -85,7 +85,7 @@ class View {
 
       newItems
         .map((item) => {
-          const element = new PostItem(item.data, modal, this.#i18n);
+          const element = new PostItem(item, modal, this.#i18n);
           return element.getElement();
         })
         .forEach((item) => {

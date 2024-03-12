@@ -6,11 +6,9 @@ const HTML = `
 `;
 
 class PostItem {
-  constructor(data, modal, local) {
-    this.state = onChange({
-      visited: false,
-      data,
-    }, this.render.bind(this));
+  constructor(state, modal, local) {
+    // Теперь передаю ссылку на состояние итема в основном стейте
+    this.state = onChange(state, this.render.bind(this));
 
     this.local = local;
     this.elements = this.create(modal);
