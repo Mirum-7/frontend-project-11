@@ -1,0 +1,8 @@
+services:
+  rss:
+    container_name: rss-app
+    build:
+      context: .
+      dockerfile: dockerfile
+    ports:
+      - "1000:80"
